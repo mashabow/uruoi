@@ -33,8 +33,8 @@ void setupWiFi()
 
 float getMoisture()
 {
-  const int vAir = 394;   // 空気中での測定値
-  const int vWater = 228; // 水中での測定値
+  const int vAir = 397;   // 空気中での測定値
+  const int vWater = 225; // 水中での測定値
   return 100.0 * (vAir - analogRead(A0)) / (vAir - vWater);
 }
 
