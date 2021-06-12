@@ -11,7 +11,7 @@ Ambient ambient;
 /* deep sleep して終了。wake 時には setup から始まる */
 void deepSleep()
 {
-  const int intervalMinutes = 10;
+  const int intervalMinutes = 20;
   ESP.deepSleep(intervalMinutes * 60 * 1000 * 1000, WAKE_RF_DEFAULT);
   delay(1000); // deep sleep が始まるまで待つ
 }
