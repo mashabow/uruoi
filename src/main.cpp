@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include "Ambient.h"
+#include <Ambient.h>
+#include <MCP3XXX.h>
 #include "secrets.h"
 
 const int PUMP_PIN = 4; // IO4
@@ -33,9 +34,12 @@ void setupWiFi()
 
 float getMoisture()
 {
-  const int vAir = 397;   // 空気中での測定値
-  const int vWater = 225; // 水中での測定値
-  return 100.0 * (vAir - analogRead(A0)) / (vAir - vWater);
+  const int vAir = 725;   // 空気中での測定値
+  const int vWater = 317; // 水中での測定値
+
+  MCP3002 adc;
+  adc.begin(5); // SPI の CS ピンとして IO5 を使う
+  return 100.0 * (vAir - adc.analogRead(0)) / (vAir - vWater);
 }
 
 void setup()
