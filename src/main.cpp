@@ -6,9 +6,6 @@
 
 ADC_MODE(ADC_VCC);
 
-WiFiClient client;
-Ambient ambient;
-
 /* deep sleep して終了。wake 時には setup から始まる */
 void deepSleep()
 {
@@ -62,15 +59,12 @@ void setup()
   const auto vcc = ESP.getVcc() / 1000.0;
   Serial.printf("Vcc: %5.3fV\n", vcc);
 
+  Ambient ambient;
+  WiFiClient client;
   ambient.begin(AMBIENT_CHANNEL_ID, AMBIENT_WRITE_KEY, &client);
   ambient.set(1, moisture);
   ambient.set(2, vcc);
   ambient.send();
-
-  // digitalWrite(PUMP_PIN, HIGH);
-  // delay(5000);
-  // digitalWrite(PUMP_PIN, LOW);
-  // delay(5000);
 
   deepSleep();
 }
