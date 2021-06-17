@@ -1,12 +1,14 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include "Ambient.h"
+#include <Ambient.h>
+#include <MCP3XXX.h>
 #include "secrets.h"
 
 const int PUMP_PIN = 4; // IO4
 
 WiFiClient client;
 Ambient ambient;
+MCP3002 adc;
 
 /* deep sleep して終了。wake 時には setup から始まる */
 void deepSleep()
@@ -44,6 +46,9 @@ void setup()
   pinMode(PUMP_PIN, OUTPUT);
   setupWiFi();
 
+  adc.begin(5); // SPI の CS ピンとして IO5 を使う
+  return;
+
   const float moisture = getMoisture();
   Serial.println(moisture);
 
@@ -59,4 +64,8 @@ void setup()
   deepSleep();
 }
 
-void loop() {}
+void loop()
+{
+  Serial.println(adc.analogRead(0));
+  delay(200);
+}
