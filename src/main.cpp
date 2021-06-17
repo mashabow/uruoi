@@ -4,8 +4,6 @@
 #include <MCP3XXX.h>
 #include "secrets.h"
 
-const int PUMP_PIN = 4; // IO4
-
 WiFiClient client;
 Ambient ambient;
 
@@ -32,20 +30,29 @@ void setupWiFi()
   Serial.println("Connected.");
 }
 
-float getMoisture()
+const float getMoisture()
 {
-  const int vAir = 725;   // 空気中での測定値
-  const int vWater = 317; // 水中での測定値
+  const int POWER_PIN = 4; // IO4: 土壌水分量センサーと MCP3002 の電源に使うピン
+
+  pinMode(POWER_PIN, OUTPUT);
+  digitalWrite(POWER_PIN, HIGH);
+  delay(1000); // センサーの状態が安定するまで待つ
 
   MCP3002 adc;
   adc.begin(5); // SPI の CS ピンとして IO5 を使う
-  return 100.0 * (vAir - adc.analogRead(0)) / (vAir - vWater);
+
+  const int vAir = 676;   // 空気中での測定値
+  const int vWater = 308; // 水中での測定値
+  const auto moisture = 100.0 * (vAir - adc.analogRead(0)) / (vAir - vWater);
+
+  digitalWrite(POWER_PIN, LOW);
+
+  return moisture;
 }
 
 void setup()
 {
   Serial.begin(74880);
-  pinMode(PUMP_PIN, OUTPUT);
   setupWiFi();
 
   const float moisture = getMoisture();
