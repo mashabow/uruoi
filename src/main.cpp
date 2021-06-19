@@ -4,8 +4,7 @@
 #include <MCP3XXX.h>
 #include "secrets.h"
 
-WiFiClient client;
-Ambient ambient;
+ADC_MODE(ADC_VCC);
 
 /* deep sleep して終了。wake 時には setup から始まる */
 void deepSleep()
@@ -55,17 +54,17 @@ void setup()
   Serial.begin(74880);
   setupWiFi();
 
-  const float moisture = getMoisture();
-  Serial.println(moisture);
+  const auto moisture = getMoisture();
+  Serial.printf("Moisture: %5.2f%%\n", moisture);
+  const auto vcc = ESP.getVcc() / 1000.0;
+  Serial.printf("Vcc: %5.3fV\n", vcc);
 
+  Ambient ambient;
+  WiFiClient client;
   ambient.begin(AMBIENT_CHANNEL_ID, AMBIENT_WRITE_KEY, &client);
   ambient.set(1, moisture);
+  ambient.set(2, vcc);
   ambient.send();
-
-  // digitalWrite(PUMP_PIN, HIGH);
-  // delay(5000);
-  // digitalWrite(PUMP_PIN, LOW);
-  // delay(5000);
 
   deepSleep();
 }
