@@ -49,6 +49,17 @@ const float getMoisture()
   return moisture;
 }
 
+void water()
+{
+  const int WATERING_PIN = 5;
+  pinMode(WATERING_PIN, OUTPUT);
+
+  // ポンプを 2 分間 ON にする
+  digitalWrite(WATERING_PIN, HIGH);
+  delay(2 * 60 * 1000);
+  digitalWrite(WATERING_PIN, LOW);
+}
+
 void setup()
 {
   Serial.begin(74880);
@@ -65,6 +76,10 @@ void setup()
   ambient.set(1, moisture);
   ambient.set(2, vcc);
   ambient.send();
+
+  const int wateringThreshold = 65; // %
+  if (moisture < wateringThreshold)
+    water();
 
   deepSleep();
 }
