@@ -6,6 +6,9 @@
 
 ADC_MODE(ADC_VCC);
 
+const int SENSOR_POWER_PIN = 4; // IO4: 土壌水分量センサーと MCP3002 の電源に使うピン
+const int WATERING_PIN = 5;     // IO5: 水やりの ON/OFF に使うピン
+
 /* deep sleep して終了。wake 時には setup から始まる */
 void deepSleep()
 {
@@ -31,10 +34,8 @@ void setupWiFi()
 
 const float getMoisture()
 {
-  const int POWER_PIN = 4; // IO4: 土壌水分量センサーと MCP3002 の電源に使うピン
-
-  pinMode(POWER_PIN, OUTPUT);
-  digitalWrite(POWER_PIN, HIGH);
+  pinMode(SENSOR_POWER_PIN, OUTPUT);
+  digitalWrite(SENSOR_POWER_PIN, HIGH);
   delay(1000); // センサーの状態が安定するまで待つ
 
   MCP3002 adc;
@@ -44,14 +45,13 @@ const float getMoisture()
   const int vWater = 308; // 水中での測定値
   const auto moisture = 100.0 * (vAir - adc.analogRead(0)) / (vAir - vWater);
 
-  digitalWrite(POWER_PIN, LOW);
+  digitalWrite(SENSOR_POWER_PIN, LOW);
 
   return moisture;
 }
 
 void water()
 {
-  const int WATERING_PIN = 5;
   pinMode(WATERING_PIN, OUTPUT);
 
   // ポンプを 2 分間 ON にする
