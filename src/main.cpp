@@ -38,7 +38,7 @@ const float getMoisture()
   delay(1000); // センサーの状態が安定するまで待つ
 
   MCP3002 adc;
-  adc.begin(5); // SPI の CS ピンとして IO5 を使う
+  adc.begin();
 
   const int vAir = 676;   // 空気中での測定値
   const int vWater = 308; // 水中での測定値
