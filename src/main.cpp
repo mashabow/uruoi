@@ -63,23 +63,24 @@ void water()
 void setup()
 {
   Serial.begin(74880);
-  setupWiFi();
 
   const auto moisture = getMoisture();
   Serial.printf("Moisture: %5.2f%%\n", moisture);
   const auto vcc = ESP.getVcc() / 1000.0;
   Serial.printf("Vcc: %5.3fV\n", vcc);
 
+  const bool doWater = moisture < 65;
+  if (doWater)
+    water();
+
+  setupWiFi();
   Ambient ambient;
   WiFiClient client;
   ambient.begin(AMBIENT_CHANNEL_ID, AMBIENT_WRITE_KEY, &client);
   ambient.set(1, moisture);
   ambient.set(2, vcc);
+  ambient.set(3, doWater);
   ambient.send();
-
-  const int wateringThreshold = 65; // %
-  if (moisture < wateringThreshold)
-    water();
 
   deepSleep();
 }
